@@ -2,10 +2,11 @@
 
 namespace li3_phpunit\extensions\command;
 
+require_once 'PHPUnit/Autoload.php';
+
 $app_root = __DIR__."/../../../../";
 
 require_once $app_root . "tests/functional/routes/TermsOfUseRouteTest.php";
-
 include $app_root . "../libraries/lithium/core/Libraries.php";
 
 use \li3_phpunit\app\SimpleTestListener;
@@ -22,6 +23,5 @@ class PhpUnitTest extends \lithium\console\Command {
 		$result->addListener(new SimpleTestListener);
 		
 		$suite->run($result);
-
 	}
 }
