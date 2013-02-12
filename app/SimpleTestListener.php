@@ -1,5 +1,9 @@
 <?php 
 
+namespace li3_phpunit\app\SimpleTestListener;
+
+use \PHPUnit_Framework_TestListener;
+
 class SimpleTestListener implements PHPUnit_Framework_TestListener
 {
     public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)

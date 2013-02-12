@@ -7,12 +7,10 @@ require_once 'PHPUnit/Autoload.php';
 $app_root = __DIR__."/../../../../";
 
 require_once $app_root . "tests/functional/routes/TermsOfUseRouteTest.php";
-include $app_root . "../libraries/lithium/core/Libraries.php";
 
 use \li3_phpunit\app\SimpleTestListener;
-
-\lithium\core\Libraries::add('lithium');
-\lithium\core\Libraries::add('app', array( 'path' => $app_root ));
+use \PHPUnit_Framework_TestSuite;
+use \PHPUnit_Framework_TestResult;
 
 
 class PhpUnitTest extends \lithium\console\Command {
