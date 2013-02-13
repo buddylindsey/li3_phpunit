@@ -14,3 +14,9 @@ Add `Libraries::add('li3_phpunit');` to your `config/bootstrap/libraries.php`
 
 ## Usage
 For now you need add the location of a test file to `li3_phpunit/extensions/command/PhpUnitTest.php`.
+
+To run the tests do from the root of your application.
+
+~~~bash
+../libraries/lithium/console/li3 php-unit-test
+~~~
