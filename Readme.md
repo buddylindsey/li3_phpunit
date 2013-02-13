@@ -7,7 +7,7 @@ Use phpunit with lithium projects
 
 ~~~bash
 cd app/
-git clone https://github.com/buddylindsey/li3_phpunit.git libraries/
+git clone https://github.com/buddylindsey/li3_phpunit.git libraries/li3_phpunit`
 ~~~
 
 Add `Libraries::add('li3_phpunit');` to your `config/bootstrap/libraries.php`
