@@ -8,7 +8,6 @@ $app_root = __DIR__."/../../../../";
 
 require_once $app_root . "tests/functional/routes/TermsOfUseRouteTest.php";
 
-use \li3_phpunit\app\SimpleTestListener;
 use \PHPUnit_Framework_TestSuite;
 use \PHPUnit_Framework_TestResult;
 
@@ -17,9 +16,7 @@ class PhpUnitTest extends \lithium\console\Command {
 	public function run() {
 
 		$suite = new PHPUnit_Framework_TestSuite('TermsOfUseRouteTest');
-		$result = new PHPUnit_Framework_TestResult;
-		$result->addListener(new SimpleTestListener);
 		
-		$suite->run($result);
+		\PHPUnit_TextUI_TestRunner::run($suite);
 	}
 }
