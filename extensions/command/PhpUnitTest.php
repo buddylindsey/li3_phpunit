@@ -4,14 +4,17 @@ namespace li3_phpunit\extensions\command;
 
 require_once 'PHPUnit/Autoload.php';
 
-use app\tests\functional\routes\TermsOfUseRouteTest;
+use \lithium\console\Command;
 use \PHPUnit_Framework_TestSuite;
+use \PHPUnit_TextUI_TestRunner;
 
-class PhpUnitTest extends \lithium\console\Command {
+use \app\tests\functional\routes\TermsOfUseRouteTest;
+
+class PhpUnitTest extends Command {
 	public function run() {
 
-		$suite = new PHPUnit_Framework_TestSuite('TermsOfUseRouteTest');
+		$suite = new PHPUnit_Framework_TestSuite('MyTest');
 
-		\PHPUnit_TextUI_TestRunner::run($suite);
+		PHPUnit_TextUI_TestRunner::run($suite);
 	}
 }
