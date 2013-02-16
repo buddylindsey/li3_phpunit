@@ -31,7 +31,6 @@ All of your tests need to extend directly one of PHPUnits base test classes. One
 Here is an example test testing that a route works.
 
 ~~~php
-<?php 
 use \lithium\net\http\Router;
 use \PHPUnit_Framework_TestCase;
 
@@ -41,5 +40,12 @@ class TermsOfUseRouteTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('/terms-of-use', $url);
 	}
 }
-?>
+~~~
+
+### Logging and Output
+You can get output in several different formats which are built into phpunit right now we support `json`, `junit`. Just add `--output=<type>` to the command. This will right out to a file of `data.xml` or `data.json`.
+
+~~~bash
+li3 test --path=/path/to/tests --output=json
+li3 test --path=/path/to/tests --output=junit
 ~~~
