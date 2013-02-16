@@ -49,3 +49,13 @@ You can get output in several different formats which are built into phpunit rig
 li3 test --path=/path/to/tests --output=json
 li3 test --path=/path/to/tests --output=junit
 ~~~
+
+### Web-based Output
+NOTE: This is still a work in progress so it doesn't work.
+
+If you are used to lihtium's web based output we have that too, with our twist. All you need to do is add/replace test routes with what is below.
+
+~~~php
+Router::connect('/test/{:args}', array('controller' => 'li3_phpunit\test\TestController'));
+Router::connect('/test', array('controller' => 'li3_phpunit\test\TestController'));
+~~~
