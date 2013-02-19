@@ -7,49 +7,96 @@ use lithium\test\Mocker;
 
 class PhpunitTest extends \lithium\test\Unit {
 
-	public $testName = 'li3_phpunit\extensions\command\test\Mock';
+	public $shellResponse = null;
 
 	public function setUp() {
 		Mocker::register();
-		$this->testee = new Phpunit(array(
-			'classes' => array(
-				'entity' => 'lithium\data\Entity',
-				'set' => 'lithium\data\Collection',
-				'relationship' => 'lithium\data\model\Relationship',
-				'test' => $this->testName,
-			),
-		));
+		$this->testee = new Phpunit();
 	}
 
-	public function filterTestOutput($out) {
-		$this->testee->applyFilter('read', function($self, $params, $chain) use($out) {
-			$params['test']->applyFilter('run', function($self, $params, $chain) use($out) {
-				echo $out;
-			});
-			return $chain->next($self, $params, $chain);
+	public function tearDown() {
+		Mocker::overwriteFunction(false);
+	}
+
+	public function watchShellExec() {
+		$shellResponse = null;
+		$this->shellResponse =& $shellResponse;
+		$fun = 'li3_phpunit\extensions\adapter\data\source\command\shell_exec';
+		Mocker::overwriteFunction($fun, function($cmd) use(&$shellResponse) {
+			$shellResponse = $cmd;
+			return;
 		});
 	}
 
-	public function testHasNoOutput() {
-		$response = '{"event":"suiteStart","suite":"\/var\/www\/app\/libraries';
-		$response .= '\/li3_phpunit\/extensions\/command\/..\/..\/..\/..\/","tests":0}';
-		$this->filterTestOutput($response);
+	public function testCallsPhpUnit() {
+		$this->watchShellExec();
 
-		ob_start();
 		$this->testee->read(null);
-		$buffer = ob_get_clean();
 
-		$this->assertPattern('/^$/', $buffer);
+		$this->assertPattern('/^phpunit/', $this->shellResponse);
 	}
 
-	public function testResponseIsArray() {
-		$response = '{"event":"suiteStart","suite":"\/var\/www\/app\/libraries';
-		$response .= '\/li3_phpunit\/extensions\/command\/..\/..\/..\/..\/","tests":0}';
-		$this->filterTestOutput($response);
+	public function testSwitchesAfterPhpUnit() {
+		$this->watchShellExec();
 
-		$response = $this->testee->read(null);
+		$this->testee->read(null, array(
+			'conditions' => array(
+				'switches' => 'foobarbaz',
+			),
+		));
 
-		$this->assertInternalType('array', $response);
+		$this->assertPattern('/^phpunit foobarbaz/', $this->shellResponse);
+	}
+
+	public function testRaw() {
+		$this->watchShellExec();
+
+		$this->testee->read(null, array(
+			'conditions' => array(
+				'raw' => 'foobarbaz',
+			),
+		));
+
+		$this->assertPattern('/foobarbaz$/', $this->shellResponse);
+	}
+
+	public function testStandardOutputWithoutFile() {
+		$this->watchShellExec();
+
+		$this->testee->read(null, array(
+			'conditions' => array(
+				'output' => 'json',
+			),
+		));
+
+		$this->assertPattern('/log\-json/', $this->shellResponse);
+		$this->assertPattern('/data\.json/', $this->shellResponse);
+	}
+
+	public function testStandardOutputWithFile() {
+		$this->watchShellExec();
+
+		$this->testee->read(null, array(
+			'conditions' => array(
+				'output' => 'junit',
+				'outputFile' => 'foo.xml',
+			),
+		));
+
+		$this->assertPattern('/log\-junit/', $this->shellResponse);
+		$this->assertPattern('/foo\.xml/', $this->shellResponse);
+	}
+
+	public function testNonStadardOutput() {
+		$this->watchShellExec();
+
+		$this->testee->read(null, array(
+			'conditions' => array(
+				'output' => 'foobaz',
+			),
+		));
+
+		$this->assertNoPattern('/log/', $this->shellResponse);
 	}
 
 }

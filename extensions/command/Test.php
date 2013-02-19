@@ -2,45 +2,32 @@
 
 namespace li3_phpunit\extensions\command;
 
-use lithium\console\Command;
-use lithium\util\String;
-
-class Test extends Command {
+class Test extends \lithium\console\Command {
 
 	/**
-	 * Path provided by user
-	 *
-	 * @param string
-	 */
-	public $path;
-
-	/**
-	 * Stored output
-	 *
-	 * @param string
-	 */
-	public $output;
-
-	/**
-	 * List of available output formats
+	 * Dependencies.
 	 *
 	 * @param array
 	 */
-	public $outputFormats = array(
-		'json' => '--log-json {:outputFile}',
-		'junit' => '--log-junit {:outputFile}',
-		'default' => '',
+	protected $_classes = array(
+		'results' => 'li3_phpunit\models\Results',
 	);
 
 	/**
-	 * List of available output file formats
+	 * Items we wish to automerge.
 	 *
 	 * @param array
 	 */
-	public $outputFile = array(
-		'json' => 'data.json',
-		'junit' => 'data.xml',
-		'default' => '',
+	protected $_autoConfig = array('classes' => 'merge');
+
+	/**
+	 * If set, these items will automatically be set as conditions.
+	 *
+	 * @param array
+	 */
+	public $autoConfigConditions = array(
+		'raw', 'switches', 'dir', 'configure',
+		'path', 'output', 'outputFile',
 	);
 
 	/**
@@ -49,18 +36,19 @@ class Test extends Command {
 	 * @return void
 	 */
 	public function run() {
-		$output = isset($this->outputFormats[$this->output]) ? $this->output : 'default';
-		$outputFile = isset($this->file) ? $this->file : $this->outputFile[$output];
-		$tpl = "phpunit {:switches} -c {:dir}/../../test/_phpunit.xml {:output} {:dir}/../../../../{:path} {:raw}";
-		echo shell_exec(String::insert($tpl, array(
-			'raw' => isset($this->raw) ? $this->raw : null,
-			'switches' => isset($this->switches) ? $this->switches : null,
-			'dir' => __DIR__,
-			'path' => $this->path,
-			'output' => String::insert($this->outputFormats[$output], array(
-				'outputFile' => $outputFile,
-			)),
-		)));
+		$conditions = array(
+			'configure' => __DIR__ . '/../../test/_phpunit.xml',
+		);
+		foreach ($this->autoConfigConditions as $item) {
+			if (!empty($this->$item)) {
+				$conditions[$item] = $this->$item;
+			}
+		}
+		$resultsClass = $this->_classes['results'];
+		$results = $resultsClass::find('first', array(
+			'conditions' => $conditions,
+		));
+		print_r($results);
 	}
 
 }

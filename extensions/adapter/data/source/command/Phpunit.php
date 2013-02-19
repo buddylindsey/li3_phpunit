@@ -2,6 +2,8 @@
 
 namespace li3_phpunit\extensions\adapter\data\source\command;
 
+use lithium\util\String;
+
 class Phpunit extends \lithium\data\source\Mock {
 
 	/**
@@ -17,12 +19,32 @@ class Phpunit extends \lithium\data\source\Mock {
 	);
 
 	/**
-	 * The list of object properties to be automatically assigned from configuration passed to
-	 * `__construct()`.
-	 *
-	 * @var array
+	 * Command templates
 	 */
-	protected $_autoConfig = array('classes' => 'merge');
+	public $templates = array(
+		'read' => 'phpunit {:switches} -c {:configure} {:output} {:dir}/../../../../{:path} {:raw}',
+	);
+
+	/**
+	 * List of available output formats
+	 *
+	 * @param array
+	 */
+	public $outputFormats = array(
+		'json' => '--log-json {:outputFile}',
+		'junit' => '--log-junit {:outputFile}',
+		'default' => '',
+	);
+
+	/**
+	 * List of available output file formats
+	 *
+	 * @param array
+	 */
+	public $outputFile = array(
+		'json' => 'data.json',
+		'junit' => 'data.xml',
+	);
 
 	/**
 	 * Abstract. Must be defined by child classes.
@@ -32,17 +54,31 @@ class Phpunit extends \lithium\data\source\Mock {
 	 * @return boolean Returns true if the operation was a success, otherwise false.
 	 */
 	public function read($query, array $options = array()) {
-		$test = new $this->_classes['test'];
-		$params = compact('query', 'options', 'test');
+		$options += array(
+			'conditions' => array(),
+		);
+		$options['conditions'] += array(
+			'raw' => null,
+			'switches' => null,
+			'dir' => __DIR__,
+			'configure' => __DIR__ . '/../../test/_phpunit.xml',
+			'path' => __DIR__,
+			'output' => null,
+			'outputFile' => null,
+		);
+		$params = compact('query', 'options');
 		return $this->_filter(__METHOD__, $params, function($self, $params) {
-			$params['test']->output = "json";
-			$params['test']->file = "php://stdout";
-			$params['test']->switches = "--stderr";
-			$params['test']->raw = "2>/dev/null";
+			$options = $params['options']['conditions'];
+			if (!isset($self->outputFormats[$options['output']])) {
+				$options['output'] = 'default';
+			} elseif (is_null($options['outputFile'])) {
+				$options['outputFile'] = $self->outputFile[$options['output']];
+			}
+			$options['output'] = String::insert($self->outputFormats[$options['output']], array(
+				'outputFile' => $options['outputFile'],
+			));
 
-			ob_start();
-			$params['test']->run();
-			return json_decode(ob_get_clean(), true);
+			return shell_exec(String::insert($self->templates['read'], $options));
 		});
 	}
 
