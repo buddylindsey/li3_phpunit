@@ -7,3 +7,5 @@ class Results extends \lithium\data\Model {
 	public $_meta = array('connection' => 'Phpunit');
 
 }
+
+?>

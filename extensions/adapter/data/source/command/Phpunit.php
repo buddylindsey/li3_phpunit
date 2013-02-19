@@ -22,7 +22,7 @@ class Phpunit extends \lithium\data\source\Mock {
 	 * Command templates
 	 */
 	public $templates = array(
-		'read' => 'phpunit {:switches} -c {:configure} {:output} {:dir}/../../../../{:path} {:raw}',
+		'read' => 'phpunit {:switches} -c {:configure} {:output} {:path} {:raw}',
 	);
 
 	/**
@@ -60,9 +60,8 @@ class Phpunit extends \lithium\data\source\Mock {
 		$options['conditions'] += array(
 			'raw' => null,
 			'switches' => null,
-			'dir' => __DIR__,
 			'configure' => __DIR__ . '/../../test/_phpunit.xml',
-			'path' => __DIR__,
+			'path' => getcwd() . '/tests',
 			'output' => null,
 			'outputFile' => null,
 		);

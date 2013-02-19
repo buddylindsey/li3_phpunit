@@ -11,6 +11,7 @@ class Test extends \lithium\console\Command {
 	 */
 	protected $_classes = array(
 		'results' => 'li3_phpunit\models\Results',
+		'response' => 'lithium\console\Response',
 	);
 
 	/**
@@ -35,9 +36,10 @@ class Test extends \lithium\console\Command {
 	 *
 	 * @return void
 	 */
-	public function run() {
+	public function run($path = null) {
 		$conditions = array(
 			'configure' => __DIR__ . '/../../test/_phpunit.xml',
+			'path' => getcwd() . '/' . $path,
 		);
 		foreach ($this->autoConfigConditions as $item) {
 			if (!empty($this->$item)) {
@@ -45,10 +47,10 @@ class Test extends \lithium\console\Command {
 			}
 		}
 		$resultsClass = $this->_classes['results'];
-		$results = $resultsClass::find('first', array(
+		$results = $resultsClass::find('all', array(
 			'conditions' => $conditions,
 		));
-		print_r($results);
+		echo $results;
 	}
 
 }

@@ -2,15 +2,10 @@
 
 namespace li3_phpunit\tests\cases\extensions\command;
 
-use lithium\test\Mocker;
 use li3_phpunit\extensions\command\Test;
 use li3_phpunit\tests\mocks\models\ResultsMock;
 
 class TestTest extends \lithium\test\Unit {
-
-	public function setUp() {
-		Mocker::register();
-	}
 
 	public function testSendsCorrectConditions() {
 		$this->run = new Test(array(
