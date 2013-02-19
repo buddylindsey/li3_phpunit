@@ -28,10 +28,19 @@ class PhpunitTest extends \lithium\test\Unit {
 		});
 	}
 
+	public function queryFactory($model = null) {
+		if (is_null($model)) {
+			$model = 'li3_phpunit\models\Results';
+		}
+		$query = new \lithium\data\model\Query;
+		$query->model($model);
+		return $query;
+	}
+
 	public function testCallsPhpUnit() {
 		$this->watchShellExec();
 
-		$this->testee->read(null);
+		$this->testee->read($this->queryFactory());
 
 		$this->assertPattern('/^phpunit/', $this->shellResponse);
 	}
@@ -39,7 +48,7 @@ class PhpunitTest extends \lithium\test\Unit {
 	public function testSwitchesAfterPhpUnit() {
 		$this->watchShellExec();
 
-		$this->testee->read(null, array(
+		$this->testee->read($this->queryFactory(), array(
 			'conditions' => array(
 				'switches' => 'foobarbaz',
 			),
@@ -51,7 +60,7 @@ class PhpunitTest extends \lithium\test\Unit {
 	public function testRaw() {
 		$this->watchShellExec();
 
-		$this->testee->read(null, array(
+		$this->testee->read($this->queryFactory(), array(
 			'conditions' => array(
 				'raw' => 'foobarbaz',
 			),
@@ -63,7 +72,7 @@ class PhpunitTest extends \lithium\test\Unit {
 	public function testStandardOutputWithoutFile() {
 		$this->watchShellExec();
 
-		$this->testee->read(null, array(
+		$this->testee->read($this->queryFactory(), array(
 			'conditions' => array(
 				'output' => 'json',
 			),
@@ -76,7 +85,7 @@ class PhpunitTest extends \lithium\test\Unit {
 	public function testStandardOutputWithFile() {
 		$this->watchShellExec();
 
-		$this->testee->read(null, array(
+		$this->testee->read($this->queryFactory(), array(
 			'conditions' => array(
 				'output' => 'junit',
 				'outputFile' => 'foo.xml',
@@ -90,7 +99,7 @@ class PhpunitTest extends \lithium\test\Unit {
 	public function testNonStadardOutput() {
 		$this->watchShellExec();
 
-		$this->testee->read(null, array(
+		$this->testee->read($this->queryFactory(), array(
 			'conditions' => array(
 				'output' => 'foobaz',
 			),

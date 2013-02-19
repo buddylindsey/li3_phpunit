@@ -2,6 +2,8 @@
 
 namespace li3_phpunit\tests\mocks\models;
 
+use stdClass;
+
 class ResultsMock extends \li3_phpunit\models\Results {
 
 	public static $staticResults = array();
@@ -12,7 +14,9 @@ class ResultsMock extends \li3_phpunit\models\Results {
 			'result' => false,
 			'time' => microtime(true),
 		);
-		return false;
+		$foo = new stdClass;
+		$foo->result = 'baz';
+		return $foo;
 	}
 
 }

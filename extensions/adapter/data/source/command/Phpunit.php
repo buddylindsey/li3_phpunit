@@ -12,10 +12,11 @@ class Phpunit extends \lithium\data\source\Mock {
 	 * @var array
 	 */
 	protected $_classes = array(
-		'entity' => 'lithium\data\Entity',
-		'set' => 'lithium\data\Collection',
+		'entity'  => 'lithium\data\entity\Document',
+		'set'     => 'lithium\data\collection\DocumentSet',
+		'schema'  => 'lithium\data\Schema',
+		'test'    => 'li3_phpunit\extensions\command\Test',
 		'relationship' => 'lithium\data\model\Relationship',
-		'test' => 'li3_phpunit\extensions\command\Test',
 	);
 
 	/**
@@ -67,7 +68,9 @@ class Phpunit extends \lithium\data\source\Mock {
 		);
 		$params = compact('query', 'options');
 		return $this->_filter(__METHOD__, $params, function($self, $params) {
-			$options = $params['options']['conditions'];
+			extract($params);
+			$options = $options['conditions'];
+			$output = $options['output'];
 			if (!isset($self->outputFormats[$options['output']])) {
 				$options['output'] = 'default';
 			} elseif (is_null($options['outputFile'])) {
@@ -77,7 +80,17 @@ class Phpunit extends \lithium\data\source\Mock {
 				'outputFile' => $options['outputFile'],
 			));
 
-			return shell_exec(String::insert($self->templates['read'], $options));
+			$data = shell_exec(String::insert($self->templates['read'], $options));
+
+			if ($output === 'json' && substr($data, 0, 1) === '{') {
+				$data = json_decode($data, true);
+			} elseif ($output === 'xml' && substr($data, 0, 5) === '<?xml') {
+				$data = json_decode(json_encode(simplexml_load_string($string)), true);
+			} else {
+				$data = array('result' => $data);
+			}
+
+			return $self->item($query->model(), $data, array('class' => 'entity'));
 		});
 	}
 

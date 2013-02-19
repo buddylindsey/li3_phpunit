@@ -50,7 +50,7 @@ class Test extends \lithium\console\Command {
 		$results = $resultsClass::find('all', array(
 			'conditions' => $conditions,
 		));
-		echo $results;
+		echo $results->result;
 	}
 
 }

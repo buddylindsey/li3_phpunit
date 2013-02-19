@@ -17,7 +17,9 @@ class TestTest extends \lithium\test\Unit {
 		$this->run->raw = 'foo_raw';
 		$this->run->dir = 'foo_dir';
 
+		ob_start();
 		$this->run->run();
+		ob_clean();
 		$results = ResultsMock::$staticResults[0]['args']['options']['conditions'];
 
 		$this->assert(isset($results['raw']));
