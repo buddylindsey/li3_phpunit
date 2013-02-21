@@ -82,15 +82,19 @@ class Phpunit extends \lithium\data\source\Mock {
 
 			$data = shell_exec(String::insert($self->templates['read'], $options));
 
+
 			if ($output === 'json' && substr($data, 0, 1) === '{') {
-				$data = json_decode($data, true);
+				$data = preg_split('/\}\{/', substr($data, 1, -1));
+				foreach ($data as $key => &$entity) {
+					$entity = json_decode("{{$entity}}", 1);
+				}
 			} elseif ($output === 'xml' && substr($data, 0, 5) === '<?xml') {
 				$data = json_decode(json_encode(simplexml_load_string($string)), true);
 			} else {
 				$data = array('result' => $data);
 			}
 
-			return $self->item($query->model(), $data, array('class' => 'entity'));
+			return $self->item($query->model(), array('dd' => $data), array('class' => 'entity'));
 		});
 	}
 
