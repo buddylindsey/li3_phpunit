@@ -3,10 +3,11 @@
 	<head>
 	</head>
 	<body>
-		Hello world default layout.
-
-<div>
-<?=$this->content; ?>
-</div>
+		<div>
+			<h1>PHP Unit Test Report View</h1>
+		</div>
+		<div>
+			<?=$this->content; ?>
+		</div>
 	</body>
 </html>
