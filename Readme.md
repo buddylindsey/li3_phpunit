@@ -51,11 +51,11 @@ li3 test --path=/path/to/tests --output=junit
 ~~~
 
 ### Web-based Output
-NOTE: This is still a work in progress so it doesn't work.
+NOTE: This works, but is in rough condition. Its visual design is like a programmer designed it.
 
 If you are used to lihtium's web based output we have that too, with our twist. All you need to do is add/replace test routes with what is below.
 
 ~~~php
-Router::connect('/test/{:args}', array('controller' => 'li3_phpunit\test\TestController'));
-Router::connect('/test', array('controller' => 'li3_phpunit\test\TestController'));
+Router::connect('/test/{:args}', array('controller' => 'li3_phpunit\controllers\ReportController'));                                                 
+Router::connect('/test', array('controller' => 'li3_phpunit\controllers\ReportController')); 
 ~~~
